@@ -56,11 +56,7 @@ contains
 
     end if toggle_assertions
     
-#ifndef FORD
   contains
-#else
-  end procedure
-#endif
     
     pure function string(numeric) result(number_as_string)
       !! Result is a string represention of the numeric argument
@@ -86,8 +82,6 @@ contains
 
     end function string
 
-#ifndef FORD
   end procedure
-#endif
 
 end submodule
