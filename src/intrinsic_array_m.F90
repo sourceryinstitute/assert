@@ -7,20 +7,26 @@ module intrinsic_array_m
   public :: intrinsic_array_t
 
   type, extends(characterizable_t) :: intrinsic_array_t
-    complex, allocatable :: complex_1D(:)
-    integer, allocatable :: integer_1D(:)
-    logical, allocatable :: logical_1D(:)
-    real,    allocatable :: real_1D(:)
+    complex,             allocatable :: complex_1D(:)
+    complex(kind(1.D0)), allocatable :: complex_double_1D(:)
+    integer,             allocatable :: integer_1D(:)
+    logical,             allocatable :: logical_1D(:)
+    real,                allocatable :: real_1D(:)
+    double precision,    allocatable :: double_precision_1D(:)
 
-    complex, allocatable :: complex_2D(:,:)
-    integer, allocatable :: integer_2D(:,:)
-    logical, allocatable :: logical_2D(:,:)
-    real,    allocatable :: real_2D(:,:)
+    complex,             allocatable :: complex_2D(:,:)
+    complex(kind(1.D0)), allocatable :: complex_double_2D(:,:)
+    integer,             allocatable :: integer_2D(:,:)
+    logical,             allocatable :: logical_2D(:,:)
+    real,                allocatable :: real_2D(:,:)
+    double precision,    allocatable :: double_precision_2D(:,:)
 
-    complex, allocatable :: complex_3D(:,:,:)
-    integer, allocatable :: integer_3D(:,:,:)
-    logical, allocatable :: logical_3D(:,:,:)
-    real,    allocatable :: real_3D(:,:,:)
+    complex,             allocatable :: complex_3D(:,:,:)
+    complex(kind(1.D0)), allocatable :: complex_double_3D(:,:,:)
+    integer,             allocatable :: integer_3D(:,:,:)
+    logical,             allocatable :: logical_3D(:,:,:)
+    real,                allocatable :: real_3D(:,:,:)
+    double precision,    allocatable :: double_precision_3D(:,:,:)
   contains
     procedure :: as_character
   end type
