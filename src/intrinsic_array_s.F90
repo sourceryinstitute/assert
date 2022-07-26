@@ -1,4 +1,9 @@
 submodule(intrinsic_array_m) intrinsic_array_s
+
+#ifdef USE_CAFFEINE
+   use caffeine_m, only : error stop => caf_error_stop
+#endif
+
   implicit none
 
 contains

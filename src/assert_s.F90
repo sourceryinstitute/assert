@@ -5,6 +5,11 @@
 !     contract # NRC-HQ-60-17-C-0007
 !
 submodule(assert_m) assert_s
+
+#ifdef USE_CAFFEINE
+   use caffeine_m, only : error stop => caf_error_stop, this_image => caf_this_image
+#endif
+
   implicit none
 
 contains

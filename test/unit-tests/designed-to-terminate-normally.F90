@@ -2,6 +2,11 @@ program designed_to_terminate_normally
   !! Test assertions expected to succeed
   use assert_m, only : assert
   use intrinsic_array_m, only : intrinsic_array_t
+  
+#ifdef USE_CAFFEINE
+   use caffeine_m, only : this_image => caf_this_image, sync all => caf_sync_all
+#endif
+
   implicit none
 
   scalar_diagnostic_data: &

@@ -1,6 +1,11 @@
 program designed_to_error_terminate
   !! Test assertions that are intended to error terminate
   use assert_m, only : assert
+  
+#ifdef USE_CAFFEINE
+   use caffeine_m, only : this_image => caf_this_image, co_reduce => caf_co_reduce
+#endif
+  
   implicit none
   
   integer exit_status
