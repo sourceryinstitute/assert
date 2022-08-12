@@ -11,15 +11,15 @@ contains
 #endif
       select type(array)
       type is(complex)
-        intrinsic_array%complex_1D = array
+        allocate(intrinsic_array%complex_1D, source = array)
       type is(integer)
-        intrinsic_array%integer_1D = array
+        allocate(intrinsic_array%integer_1D, source = array)
       type is(logical)
-        intrinsic_array%logical_1D = array
+        allocate(intrinsic_array%logical_1D, source = array)
       type is(real)
-        intrinsic_array%real_1D = array
+        allocate(intrinsic_array%real_1D, source = array)
       type is(double precision)
-        intrinsic_array%double_precision_1D = array
+        allocate(intrinsic_array%double_precision_1D, source = array)
       class default
         error  stop "intrinsic_array_t construct: unsupported rank-2 type"
       end select
@@ -27,15 +27,15 @@ contains
     rank(2)
       select type(array)
       type is(complex)
-        intrinsic_array%complex_2D = array
+        allocate(intrinsic_array%complex_2D, source = array)
       type is(integer)
-        intrinsic_array%integer_2D = array
+        allocate(intrinsic_array%integer_2D, source = array)
       type is(logical)
-        intrinsic_array%logical_2D = array
+        allocate(intrinsic_array%logical_2D, source = array)
       type is(real)
-        intrinsic_array%real_2D = array
+        allocate(intrinsic_array%real_2D, source = array)
       type is(double precision)
-        intrinsic_array%double_precision_2D = array
+        allocate(intrinsic_array%double_precision_2D, source = array)
       class default
         error  stop "intrinsic_array_t construct: unsupported rank-2 type"
       end select
@@ -43,15 +43,15 @@ contains
     rank(3)
       select type(array)
       type is(complex)
-        intrinsic_array%complex_3D = array
+        allocate(intrinsic_array%complex_3D, source = array)
       type is(integer)
-        intrinsic_array%integer_3D = array
+        allocate(intrinsic_array%integer_3D, source = array)
       type is(logical)
-        intrinsic_array%logical_3D = array
+        allocate(intrinsic_array%logical_3D, source = array)
       type is(real)
-        intrinsic_array%real_3D = array
+        allocate(intrinsic_array%real_3D, source = array)
       type is(double precision)
-        intrinsic_array%double_precision_3D = array
+        allocate(intrinsic_array%double_precision_3D, source = array)
       class default
         error  stop "intrinsic_array_t construct: unsupported rank-3 type"
       end select
@@ -62,11 +62,11 @@ contains
 #endif
 
   end procedure
-  
+
   module procedure as_character
     integer, parameter :: single_number_width=32
 
-    if (1 /= count( & 
+    if (1 /= count( &
       [ allocated(self%complex_1D), allocated(self%complex_double_1D), allocated(self%integer_1D), &
         allocated(self%logical_1D), allocated(self%real_1D), &
         allocated(self%complex_2D), allocated(self%complex_double_2D), allocated(self%integer_2D), &
@@ -132,6 +132,6 @@ contains
     end if
 
     character_self = trim(adjustl(character_self))
-  end procedure 
+  end procedure
 
 end submodule intrinsic_array_s
