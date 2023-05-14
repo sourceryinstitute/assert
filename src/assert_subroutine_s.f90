@@ -4,7 +4,7 @@
 !     "Multi-Dimensional Physics Implementation into Fuel Analysis under Steady-state and Transients (FAST)",
 !     contract # NRC-HQ-60-17-C-0007
 !
-submodule(assert_m) assert_s
+submodule(assert_subroutine_m) assert_subroutine_s
   implicit none
 
 contains
@@ -84,4 +84,4 @@ contains
 
   end procedure
 
-end submodule
+end submodule assert_subroutine_s

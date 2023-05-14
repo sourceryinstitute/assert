@@ -4,7 +4,7 @@
 !     "Multi-Dimensional Physics Implementation into Fuel Analysis under Steady-state and Transients (FAST)",
 !     contract # NRC-HQ-60-17-C-0007
 !
-module assert_m
+module assert_subroutine_m
   !! summary: Utility for runtime checking of logical assertions.
   !! usage: error-terminate if the assertion fails:
   !!
@@ -44,4 +44,4 @@ module assert_m
 
   end interface
 
-end module
+end module assert_subroutine_m

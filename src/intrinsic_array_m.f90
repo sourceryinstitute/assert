@@ -35,11 +35,7 @@ module intrinsic_array_m
     
     pure module function construct(array) result(intrinsic_array)
       implicit none
-#ifndef NAGFOR
       class(*), intent(in) :: array(..)
-#else
-      class(*), intent(in) :: array(:)
-#endif
       type(intrinsic_array_t) intrinsic_array
     end function
     
