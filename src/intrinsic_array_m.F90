@@ -33,11 +33,47 @@ module intrinsic_array_m
 
   interface intrinsic_array_t
     
+#ifndef _CRAYFTN
+
     pure module function construct(array) result(intrinsic_array)
       implicit none
       class(*), intent(in) :: array(..)
       type(intrinsic_array_t) intrinsic_array
     end function
+
+#else
+
+    pure module function complex_array(array) result(intrinsic_array)
+      implicit none
+      complex, intent(in) :: array(..)
+      type(intrinsic_array_t) intrinsic_array
+    end function
+
+    pure module function integer_array(array) result(intrinsic_array)
+      implicit none
+      integer, intent(in) :: array(..)
+      type(intrinsic_array_t) intrinsic_array
+    end function
+
+    pure module function logical_array(array) result(intrinsic_array)
+      implicit none
+      logical, intent(in) :: array(..)
+      type(intrinsic_array_t) intrinsic_array
+    end function
+
+    pure module function real_array(array) result(intrinsic_array)
+      implicit none
+      real, intent(in) :: array(..)
+      type(intrinsic_array_t) intrinsic_array
+    end function
+
+    pure module function double_precision_array(array) result(intrinsic_array)
+      implicit none
+      double precision, intent(in) :: array(..)
+      type(intrinsic_array_t) intrinsic_array
+    end function
+
+#endif
     
   end interface
 

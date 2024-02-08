@@ -3,6 +3,7 @@ submodule(intrinsic_array_m) intrinsic_array_s
 
 contains
 
+#ifndef _CRAYFTN
   module procedure construct
 
   select rank(array)
@@ -59,17 +60,21 @@ contains
 
   end procedure
 
+  pure function one_allocated_component(self) result(one_allocated)
+    type(intrinsic_array_t), intent(in) :: self
+    logical one_allocated
+    one_allocated = count( &
+      [ allocated(self%complex_1D), allocated(self%complex_double_1D), allocated(self%integer_1D), allocated(self%logical_1D), &
+        allocated(self%real_1D), allocated(self%complex_2D), allocated(self%complex_double_2D), allocated(self%integer_2D), &
+        allocated(self%logical_2D), allocated(self%real_2D), allocated(self%complex_3D), allocated(self%complex_double_3D), &
+        allocated(self%integer_3D), allocated(self%logical_3D), allocated(self%real_3D) &
+      ])
+  end function
+
   module procedure as_character
     integer, parameter :: single_number_width=32
 
-    if (1 /= count( &
-      [ allocated(self%complex_1D), allocated(self%complex_double_1D), allocated(self%integer_1D), &
-        allocated(self%logical_1D), allocated(self%real_1D), &
-        allocated(self%complex_2D), allocated(self%complex_double_2D), allocated(self%integer_2D), &
-        allocated(self%logical_2D), allocated(self%real_2D), &
-        allocated(self%complex_3D), allocated(self%complex_double_3D), allocated(self%integer_3D), &
-        allocated(self%logical_3D), allocated(self%real_3D) &
-      ])) error stop "intrinsic_array_t as_character: ambiguous component allocation status."
+    if (.not. one_allocated_component(self)) error stop "intrinsic_array_s(as_character): invalid number of allocated components"
 
     if (allocated(self%complex_1D)) then
       character_self = repeat(" ", ncopies = single_number_width*size(self%complex_1D))
@@ -129,5 +134,84 @@ contains
 
     character_self = trim(adjustl(character_self))
   end procedure
+
+#else
+
+    module procedure complex_array
+
+      select rank(array)
+        rank(1)
+            allocate(intrinsic_array%complex_1D, source = array)
+        rank(2)
+            allocate(intrinsic_array%complex_2D, source = array)
+        rank(3)
+            allocate(intrinsic_array%complex_3D, source = array)
+        rank default
+          error  stop "intrinsic_array_t complex_array: unsupported rank"
+      end select
+
+    end procedure
+
+    module procedure integer_array
+
+      select rank(array)
+        rank(1)
+            allocate(intrinsic_array%integer_1D, source = array)
+        rank(2)
+            allocate(intrinsic_array%integer_2D, source = array)
+        rank(3)
+            allocate(intrinsic_array%integer_3D, source = array)
+        rank default
+          error  stop "intrinsic_array_t integer_array: unsupported rank"
+      end select
+
+    end procedure
+
+    module procedure logical_array
+
+      select rank(array)
+        rank(1)
+            allocate(intrinsic_array%logical_1D, source = array)
+        rank(2)
+            allocate(intrinsic_array%logical_2D, source = array)
+        rank(3)
+            allocate(intrinsic_array%logical_3D, source = array)
+        rank default
+          error  stop "intrinsic_array_t logical_array: unsupported rank"
+      end select
+
+    end procedure
+
+    module procedure real_array
+
+      select rank(array)
+        rank(1)
+            allocate(intrinsic_array%real_1D, source = array)
+        rank(2)
+            allocate(intrinsic_array%real_2D, source = array)
+        rank(3)
+            allocate(intrinsic_array%real_3D, source = array)
+        rank default
+          error  stop "intrinsic_array_t real_array: unsupported rank"
+      end select
+
+    end procedure
+
+    module procedure double_precision_array
+
+      select rank(array)
+        rank(1)
+            allocate(intrinsic_array%double_precision_1D, source = array)
+        rank(2)
+            allocate(intrinsic_array%double_precision_2D, source = array)
+        rank(3)
+            allocate(intrinsic_array%double_precision_3D, source = array)
+        rank default
+          error  stop "intrinsic_array_t double_precision_array: unsupported rank"
+      end select
+
+    end procedure
+
+#endif
 
 end submodule intrinsic_array_s
