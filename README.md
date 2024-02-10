@@ -112,7 +112,7 @@ fpm test --compiler crayftn.sh
 ```
 
 
-### Building and testing with the Cray Compiler Environment (CCE)
+### Building and testing with other compilers
 To use Assert with other compilers, please submit an issue or pull request.  
 
 ### Running the examples
