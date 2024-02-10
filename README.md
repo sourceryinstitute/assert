@@ -60,26 +60,21 @@ Downloading, Building, and Running Examples
 Assert was developed primarily with `gfortran` 11.2.0 and `nagfor` 7.1.
 Recent versions of the Cray and Intel compilers should also suffice.  
 
-### Downloading, building, and testing
-
-#### Downloading Assert
+### Downloading Assert
 ```
 git clone git@github.com:sourceryinstitute/assert
 cd assert
 ```
 
-#### Building and testing: single-image (serial) execution
+### Building and testing with `gfortran`
+#### Single-image (serial) execution
 The following command builds Assert and runs the full test suite in a single image:
 ```
 fpm test
 ```
 where `fpm test` builds the Assert library and runs the test suite, including the tests.
-To build with the Numerical Algorithms Group (NAG) Fortran compiler, use
-```
-fpm test --compiler nagfor --flag -fpp
-```
 
-#### Building and testing: multi-image (parallel) execution
+#### Multi-image (parallel) execution
 With `gfortran` and OpenCoarrays installed,
 ```
 fpm test --compiler caf --runner "cafrun -n 2"
@@ -90,7 +85,35 @@ To build and test with the Numerical Algorithms Group (NAG) Fortran compiler ver
 fpm test --compiler=nagfor --flag="-coarray=cosmp -fpp -f2018"
 ```
 
-For documentation on using Assert with other compilers, please submit an issue or pull request.  
+### Building and testing with the Intel `ifx` compiler
+```
+fpm test --compiler ifx --flag -coarray
+```
+
+### Building and testing with the Numerical Algorithms Group (NAG) compiler
+```
+fpm test --compiler nagfor --flag "-fpp -coarray=cosmp"
+```
+
+### Building and testing with the Cray Compiler Environment (CCE)
+Because `fpm` uses the compiler name to determine the compiler identity and because
+CCE provides one compiler wrapper, `ftn`, for invoking all compilers, you will
+need to invoke `ftn` in a shell script named to identify CCE compiler. For example,
+place a script named `crayftn.sh` in your path with the following contents and with
+executable privileges set appropriately:
+```
+#!/bin/bash
+
+ftn $@
+```
+Then build and test Assert with the command
+```
+fpm test --compiler crayftn.sh
+```
+
+
+### Building and testing with the Cray Compiler Environment (CCE)
+To use Assert with other compilers, please submit an issue or pull request.  
 
 ### Running the examples
 See the [./example](./example) subdirectory.

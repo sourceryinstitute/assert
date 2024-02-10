@@ -20,7 +20,7 @@ contains
       type is(double precision)
         allocate(intrinsic_array%double_precision_1D, source = array)
       class default
-        error  stop "intrinsic_array_t construct: unsupported rank-2 type"
+        error  stop "intrinsic_array_t construct: unsupported rank-1 type"
       end select
     rank(2)
       select type(array)
