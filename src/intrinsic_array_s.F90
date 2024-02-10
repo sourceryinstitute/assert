@@ -60,83 +60,7 @@ contains
 
   end procedure
 
-  pure function one_allocated_component(self) result(one_allocated)
-    type(intrinsic_array_t), intent(in) :: self
-    logical one_allocated
-    one_allocated = count( &
-      [ allocated(self%complex_1D), allocated(self%complex_double_1D), allocated(self%integer_1D), allocated(self%logical_1D), &
-        allocated(self%real_1D), allocated(self%complex_2D), allocated(self%complex_double_2D), allocated(self%integer_2D), &
-        allocated(self%logical_2D), allocated(self%real_2D), allocated(self%complex_3D), allocated(self%complex_double_3D), &
-        allocated(self%integer_3D), allocated(self%logical_3D), allocated(self%real_3D) &
-      ])
-  end function
-
-  module procedure as_character
-    integer, parameter :: single_number_width=32
-
-    if (.not. one_allocated_component(self)) error stop "intrinsic_array_s(as_character): invalid number of allocated components"
-
-    if (allocated(self%complex_1D)) then
-      character_self = repeat(" ", ncopies = single_number_width*size(self%complex_1D))
-      write(character_self, *) self%complex_1D
-    else if (allocated(self%complex_double_1D)) then
-      character_self = repeat(" ", ncopies = single_number_width*size(self%complex_double_1D))
-      write(character_self, *) self%complex_double_1D
-    else if (allocated(self%integer_1D)) then
-      character_self = repeat(" ", ncopies = single_number_width*size(self%integer_1D))
-      write(character_self, *) self%integer_1D
-    else if (allocated(self%logical_1D)) then
-      character_self = repeat(" ", ncopies = single_number_width*size(self%logical_1D))
-      write(character_self, *) self%logical_1D
-    else if (allocated(self%real_1D)) then
-      character_self = repeat(" ", ncopies = single_number_width*size(self%real_1D))
-      write(character_self, *) self%real_1D
-    else if (allocated(self%double_precision_1D)) then
-      character_self = repeat(" ", ncopies = single_number_width*size(self%double_precision_1D))
-      write(character_self, *) self%double_precision_1D
-    else if (allocated(self%complex_2D)) then
-      character_self = repeat(" ", ncopies = single_number_width*size(self%complex_2D))
-      write(character_self, *) self%complex_2D
-    else if (allocated(self%complex_double_2D)) then
-      character_self = repeat(" ", ncopies = single_number_width*size(self%complex_double_2D))
-      write(character_self, *) self%complex_double_2D
-    else if (allocated(self%integer_2D)) then
-      character_self = repeat(" ", ncopies = single_number_width*size(self%integer_2D))
-      write(character_self, *) self%integer_2D
-    else if (allocated(self%logical_2D)) then
-      character_self = repeat(" ", ncopies = single_number_width*size(self%logical_1D))
-      write(character_self, *) self%logical_2D
-    else if (allocated(self%real_2D)) then
-      character_self = repeat(" ", ncopies = single_number_width*size(self%real_2D))
-      write(character_self, *) self%real_2D
-    else if (allocated(self%double_precision_2D)) then
-      character_self = repeat(" ", ncopies = single_number_width*size(self%double_precision_2D))
-      write(character_self, *) self%double_precision_2D
-    else if (allocated(self%complex_3D)) then
-      character_self = repeat(" ", ncopies = single_number_width*size(self%complex_3D))
-      write(character_self, *) self%complex_3D
-    else if (allocated(self%complex_double_3D)) then
-      character_self = repeat(" ", ncopies = single_number_width*size(self%complex_double_3D))
-      write(character_self, *) self%complex_double_3D
-    else if (allocated(self%integer_3D)) then
-      character_self = repeat(" ", ncopies = single_number_width*size(self%integer_3D))
-      write(character_self, *) self%integer_3D
-    else if (allocated(self%logical_3D)) then
-      character_self = repeat(" ", ncopies = single_number_width*size(self%logical_1D))
-      write(character_self, *) self%logical_3D
-    else if (allocated(self%real_3D)) then
-      character_self = repeat(" ", ncopies = single_number_width*size(self%real_3D))
-      write(character_self, *) self%real_3D
-    else if (allocated(self%double_precision_3D)) then
-      character_self = repeat(" ", ncopies = single_number_width*size(self%double_precision_3D))
-      write(character_self, *) self%double_precision_3D
-    end if
-
-    character_self = trim(adjustl(character_self))
-  end procedure
-
 #else
-
     module procedure complex_array
 
       select rank(array)
@@ -213,5 +137,80 @@ contains
     end procedure
 
 #endif
+
+  pure function one_allocated_component(self) result(one_allocated)
+    type(intrinsic_array_t), intent(in) :: self
+    logical one_allocated
+    one_allocated = 1 == count( &
+      [ allocated(self%complex_1D), allocated(self%complex_double_1D), allocated(self%integer_1D), allocated(self%logical_1D), &
+        allocated(self%real_1D), allocated(self%complex_2D), allocated(self%complex_double_2D), allocated(self%integer_2D), &
+        allocated(self%logical_2D), allocated(self%real_2D), allocated(self%complex_3D), allocated(self%complex_double_3D), &
+        allocated(self%integer_3D), allocated(self%logical_3D), allocated(self%real_3D) &
+      ])
+  end function
+
+  module procedure as_character
+    integer, parameter :: single_number_width=32
+
+    if (.not. one_allocated_component(self)) error stop "intrinsic_array_s(as_character): invalid number of allocated components"
+
+    if (allocated(self%complex_1D)) then
+      character_self = repeat(" ", ncopies = single_number_width*size(self%complex_1D))
+      write(character_self, *) self%complex_1D
+    else if (allocated(self%complex_double_1D)) then
+      character_self = repeat(" ", ncopies = single_number_width*size(self%complex_double_1D))
+      write(character_self, *) self%complex_double_1D
+    else if (allocated(self%integer_1D)) then
+      character_self = repeat(" ", ncopies = single_number_width*size(self%integer_1D))
+      write(character_self, *) self%integer_1D
+    else if (allocated(self%logical_1D)) then
+      character_self = repeat(" ", ncopies = single_number_width*size(self%logical_1D))
+      write(character_self, *) self%logical_1D
+    else if (allocated(self%real_1D)) then
+      character_self = repeat(" ", ncopies = single_number_width*size(self%real_1D))
+      write(character_self, *) self%real_1D
+    else if (allocated(self%double_precision_1D)) then
+      character_self = repeat(" ", ncopies = single_number_width*size(self%double_precision_1D))
+      write(character_self, *) self%double_precision_1D
+    else if (allocated(self%complex_2D)) then
+      character_self = repeat(" ", ncopies = single_number_width*size(self%complex_2D))
+      write(character_self, *) self%complex_2D
+    else if (allocated(self%complex_double_2D)) then
+      character_self = repeat(" ", ncopies = single_number_width*size(self%complex_double_2D))
+      write(character_self, *) self%complex_double_2D
+    else if (allocated(self%integer_2D)) then
+      character_self = repeat(" ", ncopies = single_number_width*size(self%integer_2D))
+      write(character_self, *) self%integer_2D
+    else if (allocated(self%logical_2D)) then
+      character_self = repeat(" ", ncopies = single_number_width*size(self%logical_1D))
+      write(character_self, *) self%logical_2D
+    else if (allocated(self%real_2D)) then
+      character_self = repeat(" ", ncopies = single_number_width*size(self%real_2D))
+      write(character_self, *) self%real_2D
+    else if (allocated(self%double_precision_2D)) then
+      character_self = repeat(" ", ncopies = single_number_width*size(self%double_precision_2D))
+      write(character_self, *) self%double_precision_2D
+    else if (allocated(self%complex_3D)) then
+      character_self = repeat(" ", ncopies = single_number_width*size(self%complex_3D))
+      write(character_self, *) self%complex_3D
+    else if (allocated(self%complex_double_3D)) then
+      character_self = repeat(" ", ncopies = single_number_width*size(self%complex_double_3D))
+      write(character_self, *) self%complex_double_3D
+    else if (allocated(self%integer_3D)) then
+      character_self = repeat(" ", ncopies = single_number_width*size(self%integer_3D))
+      write(character_self, *) self%integer_3D
+    else if (allocated(self%logical_3D)) then
+      character_self = repeat(" ", ncopies = single_number_width*size(self%logical_1D))
+      write(character_self, *) self%logical_3D
+    else if (allocated(self%real_3D)) then
+      character_self = repeat(" ", ncopies = single_number_width*size(self%real_3D))
+      write(character_self, *) self%real_3D
+    else if (allocated(self%double_precision_3D)) then
+      character_self = repeat(" ", ncopies = single_number_width*size(self%double_precision_3D))
+      write(character_self, *) self%double_precision_3D
+    end if
+
+    character_self = trim(adjustl(character_self))
+  end procedure
 
 end submodule intrinsic_array_s
