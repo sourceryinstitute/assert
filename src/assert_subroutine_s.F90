@@ -20,9 +20,13 @@ contains
       check_assertion: &
       if (.not. assertion) then
 
+#ifndef __flang__
         associate(me=>this_image()) ! work around gfortran bug
           header = 'Assertion "' // description // '" failed on image ' // string(me)
         end associate
+#else
+          header = 'Assertion "' // description // '" failed.'
+#endif
  
         represent_diagnostics_as_string: &
         if (.not. present(diagnostic_data)) then
