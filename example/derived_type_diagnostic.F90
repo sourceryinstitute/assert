@@ -137,17 +137,9 @@ program diagnostic_data_pattern
 
   type(stuff_t) stuff
  
-#ifndef _CRAYFTN
   associate (i => stuff_t(z=(0.,1.)))
     call assert(i%defined(), "main: i%defined()", characterizable_stuff_t(i))!Passes: constructor postcondition ensures defined data
   end associate
-#else
-  block
-    type(stuff_t) stuff
-    stuff = stuff_t(z=(0.,1.))
-    call assert(stuff%defined(), "main: i%defined()", characterizable_stuff_t(stuff))
-  end block
-#endif
 
   print *, stuff%z() ! Fails: accessor precondition catches use of undefined data
 
