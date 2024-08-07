@@ -8,7 +8,7 @@
     <meta name="author" content="" >
     <link rel="icon" href="../favicon.png">
 
-    <title>construct &ndash; Assert library</title>
+    <title>string &ndash; Assert library</title>
 
     <link href="../css/bootstrap.min.css" rel="stylesheet">
     <link href="../css/pygments.css" rel="stylesheet">
@@ -78,8 +78,8 @@
 
     <div class="container">
   <div class="row">
-    <h1>construct
-      <small>Procedure</small>
+    <h1>string
+      <small>Function</small>
     </h1>
     <div class="row">
   <div class="col-lg-12">
@@ -88,14 +88,14 @@
      <li><i class="fa fa-list-ol"></i>
        <a data-toggle="tooltip"
     data-placement="bottom" data-html="true"
-    title="162.9% of total for procedures.">57 statements</a>
+    title="22.9% of total for procedures.">8 statements</a>
      </li> 
-    <li><i class="fa fa-code"></i><a href="../src/intrinsic_array_s.F90"> Source File</a></li>
+    <li><i class="fa fa-code"></i><a href="../src/string_m.f90"> Source File</a></li>
   </ul>
   <ol class="breadcrumb in-well text-right">
-     <li><a href='../sourcefile/intrinsic_array_s.f90.html'>intrinsic_array_s.F90</a></li>
-     <li><a href='../module/intrinsic_array_s.html'>intrinsic_array_s</a></li>
-     <li class="active">construct</li>
+     <li><a href='../sourcefile/string_m.f90.html'>string_m.f90</a></li>
+     <li><a href='../module/string_m.html'>string_m</a></li>
+     <li class="active">string</li>
   </ol>
 </div>
 </div>
@@ -120,13 +120,25 @@
     </div>
     
     <div class="col-md-9" id='text'>
-    <h2>module procedure construct <small>module procedure construct()</small></h2>
+    <h2>public pure function string(number) result(number_as_string)</h2>
     
 
 
     <h3>Arguments</h3>
-    <em>None</em>
-    <br>
+      <table class="table table-striped varlist">
+<thead><tr><th>Type</th><th>Intent</th><th>Optional</th><th>Attributes</th><th></th><th>Name</th><th></th></thead>
+<tbody>
+<tr>
+  <td><span class="anchor" id="variable-number"></span>integer,</td>
+<td>intent(in)</td>
+  <td></td>  <td></td><td>::</td>
+  <td><strong>number</strong></td><td></td>
+</tr>
+</tbody>
+</table>
+
+   <h3>Return Value <small><span class="anchor" id="variable-number_as_string"></span>character(len=:),allocatable</small></h3>
+    
     <br>
 
     <section class="visible-xs visible-sm hidden-md">

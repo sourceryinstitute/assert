@@ -52,14 +52,6 @@ The [examples/README.md] file shows examples of writing constraints in notes on 
 Downloading, Building, and Running Examples
 -------------------------------------------
 
-### Prerequisites
-1. A Fortran 2018 compiler.
-2. The [Fortran Package Manager].
-3. _Optional_: [OpenCoarrays] for parallel execution with the GNU Fortran compiler.
-
-Assert was developed primarily with `gfortran` 11.2.0 and `nagfor` 7.1.
-Recent versions of the Cray and Intel compilers should also suffice.  
-
 ### Downloading Assert
 ```
 git clone git@github.com:sourceryinstitute/assert
@@ -70,29 +62,34 @@ cd assert
 #### Single-image (serial) execution
 The following command builds Assert and runs the full test suite in a single image:
 ```
-fpm test
+fpm test --profile release
 ```
-where `fpm test` builds the Assert library and runs the test suite, including the tests.
+which builds the Assert library and runs the test suite.
 
 #### Multi-image (parallel) execution
 With `gfortran` and OpenCoarrays installed,
 ```
-fpm test --compiler caf --runner "cafrun -n 2"
+fpm test --compiler caf --profile release --runner "cafrun -n 2"
 ```
 To build and test with the Numerical Algorithms Group (NAG) Fortran compiler version
 7.1 or later, use
 ```
-fpm test --compiler=nagfor --flag="-coarray=cosmp -fpp -f2018"
+fpm test --compiler=nagfor --profile release --flag="-coarray=cosmp -fpp -f2018"
 ```
 
 ### Building and testing with the Intel `ifx` compiler
 ```
-fpm test --compiler ifx --flag -coarray
+fpm test --compiler ifx --profile release --flag -coarray
+```
+### Building and testing with the LLVM `flang-new` compiler
+```
+fpm test --compiler flang-new --flag "-mmlir -allow-assumed-rank -O3"
+
 ```
 
 ### Building and testing with the Numerical Algorithms Group (NAG) compiler
 ```
-fpm test --compiler nagfor --flag "-fpp -coarray=cosmp"
+fpm test --compiler nagfor --profile release --flag "-fpp -coarray=cosmp"
 ```
 
 ### Building and testing with the Cray Compiler Environment (CCE)
@@ -108,7 +105,7 @@ ftn $@
 ```
 Then build and test Assert with the command
 ```
-fpm test --compiler crayftn.sh
+fpm test --compiler crayftn.sh --profile release
 ```
 
 
