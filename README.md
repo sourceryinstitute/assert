@@ -1,8 +1,7 @@
 Assert
 ======
 
-A simple assertion utility taking advantage of the Fortran 2018 standard's introduction of variable stop codes
-and error termination inside pure procedures.
+An assertion utility that combines variable stop codes and error termination in `pure` procedures to produce descriptive messages when a program detects violations of the requirements for correct execution.
 
 Motivations
 -----------
@@ -11,18 +10,26 @@ Motivations
 
 Overview
 --------
-This assertion utility contains three public entities:
+This assertion utility contains four public entities:
 
 1. An `assert` subroutine,
 2. A `characterizable_t` abstract type supporting `assert`, and
 3. An `intrinsic_array_t` non-abstract type extending `characterizable_t`.
+4. A `assert_macros.h` header file containing C-preprocessor macros.
 
 The `assert` subroutine
-
 * Error-terminates with a variable stop code when a user-defined logical assertion fails,
 * Includes user-supplied diagnostic data in the output if provided by the calling procedure,
 * Is callable inside `pure` procedures, and
-* Can be eliminated during an optimizing compiler's dead-code removal phase based on a preprocessor macro: `-DUSE_ASSERTIONS=.false.`.
+* Can be eliminated at compile-time.
+
+The program [example/invoke-via-macro.F90] demonstrates the preferred way to invoke the `assert` subroutine via the three provided macros. 
+Invoking `assert` this way insures that `assert` invocations will be completely removed whenever the `DEBUG` macro is set during compilation.
+Due to a limitation of `fpm`, this approach works best if the project using Assert is also a `fpm` project.
+If instead `fpm install` is used, then either the user must copy `include/assert_macros.h` to the installation directory (default: `~/.local/include`) or 
+the user must invoke `assert` directly (via `call assert(...)`).
+If invoked directly, the user can set pass `-DUSE_ASSERTIONS=.false.` at compile time. 
+The latter approach cause `assert` to start and end with `if (.false.) then ... end if`, which might facilitate automatic removal of `assert` during the dead-code removal phase of optimizing compilers.
 
 The `characterizable_t` type defines an `as_character()` deferred binding that produces `character` strings for use as diagnostic output from a user-defined derived type that extends  `characterizable_t` and implements the deferred binding.
 
@@ -131,3 +138,4 @@ For further documentation, please see [example/README.md] and the [tests].  Also
 [OCL]: https://en.wikipedia.org/wiki/Object_Constraint_Language
 [Assert's GitHub Pages site]: https://sourceryinstitute.github.io/assert/
 [`ford`]: https://github.com/Fortran-FOSS-Programmers/ford
+[example/invoke-via-macro.F90]: ./example/invoke-via-macro.F90

@@ -1,5 +1,5 @@
 name = "assert"
-version = "1.7.0"
+version = "2.0.0"
 license = "BSD"
 author = ["Damian Rouson"]
 maintainer = "damian@sourceryinstitute.org"
@@ -7,4 +7,3 @@ copyright = "2021-2024 Sourcery Institute"
 
 [install]
 library = true
-
