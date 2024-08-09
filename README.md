@@ -74,7 +74,7 @@ fpm test --compiler caf --profile release --runner "cafrun -n 2"
 To build and test with the Numerical Algorithms Group (NAG) Fortran compiler version
 7.1 or later, use
 ```
-fpm test --compiler=nagfor --profile release --flag="-coarray=cosmp -fpp -f2018"
+fpm test --compiler=nagfor --profile release --flag "-coarray=cosmp -fpp -f2018"
 ```
 
 ### Building and testing with the Intel `ifx` compiler
