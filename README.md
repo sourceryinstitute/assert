@@ -28,10 +28,6 @@ The `characterizable_t` type defines an `as_character()` deferred binding that p
 
 The `intrinsic_array_t` type that extends `characterizable_t` provides a convenient mechanism for producing diagnostic output from arrays of intrinsic type `complex`, `integer`, `logical`, or `real`.
 
-Documentation
--------------
-See [Assert's GitHub Pages site] for HTML documentation generated with [`ford`].
-
 Use Cases
 ---------
 Two common use cases include
@@ -117,7 +113,113 @@ See the [./example](./example) subdirectory.
 
 Documentation
 -------------
+
+See [Assert's GitHub Pages site] for HTML documentation generated with [`ford`].
+
 For further documentation, please see [example/README.md] and the [tests].  Also, the code in [src] has comments formatted for generating HTML documentation using [FORD].
+
+### Potential pitfalls of `call_assert` macros:
+
+The `call_assert*` macros from the `assert_macros.h` header file provide the
+attractive guarantee that they will always compile *completely* away when
+assertions are disabled, regardless of compiler analyses and optimization
+level. This means users can reap the maintainability and correctness benefits
+of aggressively asserting invariants throughout their code, without needing to
+balance any potential performance cost associated with such assertions when the
+code runs in production.
+
+Unfortunately, C-preprocessor macros do not integrate cleanly with some aspects
+of the Fortran language. As such, you might encounter one or more of the
+following pitfalls when using these macros.
+
+#### Line length limit
+
+Up to and including the Fortran 2018 language standard, compilers were only
+required to support up to 132 characters per free-form source line.
+Preprocessor macro invocations are always expanded to a single line during
+compilation, so when passing non-trivial arguments to macros including
+`call_assert*` it becomes easy for the expansion to exceed this line length
+limit. This can result in compile-time errors like the following from gfortran:
+
+```
+Error: Line truncated at (1) [-Werror=line-truncation]
+```
+
+Some compilers offer a command-line argument that can be used to workaround this legacy limit, eg:
+
+* `gfortran -ffree-line-length-0` aka `gfortran -ffree-line-length-none`
+
+When using `fpm`, one can pass such a flag to the compiler using the `fpm --flag` option, eg:
+
+```shell
+$ fpm test --profile release --flag -ffree-line-length-0
+```
+
+Thankfully Fortran 2023 raised this obscolecent line limit to 10,000
+characters, so by using newer compilers you might never encounter this problem.
+
+#### Line breaks in macro invocations
+
+As mentioned above, preprocessor macro invocations are always expanded to a
+single line, no matter how many lines were used by the invocation.  This means
+it's problematic to invoke the `call_assert*` macros with code like the
+following:
+
+```fortran
+! INCORRECT: don't use & line continuations!
+call_assert_diagnose( computed_checksum == expected_checksum, &
+                      "Checksum mismatch failure!", &
+                      expected_checksum )                  
+```
+When the preprocessor expands the macro invocation above, the `&` characters
+above are not interpreted as Fortran line continuations. Instead they are
+inserted into the middle of the single-line macro expansion, where they will
+(likely) create a confusing syntax error.
+
+Instead when breaking long lines in a macro invocation, just break the line (no
+continuation character!), eg:
+
+```fortran
+! When breaking a lines in a macro invocation, just use new-line with no `&` continuation character:
+call_assert_diagnose( computed_checksum == expected_checksum,
+                      "Checksum mismatch failure!",
+                      expected_checksum )                  
+```
+
+#### Comments in macro invocations
+
+Fortran does not support comments with an end delimiter,
+only to-end-of-line comments.  As such, there is no way to safely insert a
+Fortran comment into the middle of a macro invocation.  For example, the
+following seemingly reasonable code results in a syntax error
+after macro expansion:
+
+```fortran
+! INCORRECT: cannot use Fortran comments inside macro invocation
+call_assert_diagnose( computed_checksum == expected_checksum, ! ensured since version 3.14
+                      "Checksum mismatch failure!",           ! TODO: write a better message here
+                      computed_checksum )             
+```
+
+Depending on your compiler it *might* be possible to use a C-style block
+comment (because they are removed by the preprocessor), for example with
+gfortran one can instead write the following:
+
+```fortran
+call_assert_diagnose( computed_checksum == expected_checksum, /* ensured since version 3.14 */
+                      "Checksum mismatch failure!",           /* TODO: write a better message here */
+                      computed_checksum )
+```
+
+However that capability might not be portable to other Fortran compilers. 
+When in doubt, one can always move the comment outside the macro invocation:
+
+```fortran
+! assert a property ensured since version 3.14
+call_assert_diagnose( computed_checksum == expected_checksum, 
+                      "Checksum mismatch failure!",           
+                      computed_checksum ) ! TODO: write a better message above
+```                      
 
 [Hyperlinks]:#
 [OpenCoarrays]: https://github.com/sourceryinstitute/opencoarrays
