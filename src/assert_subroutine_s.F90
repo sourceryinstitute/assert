@@ -31,7 +31,7 @@ contains
         represent_diagnostics_as_string: &
         if (.not. present(diagnostic_data)) then
 
-          trailer = "(none provided)"
+          trailer = ""
 
         else
 
@@ -51,10 +51,11 @@ contains
             class default
               trailer = "of unsupported type."
           end select
+          trailer = ' with diagnostic data "' // trailer // '"'
 
         end if represent_diagnostics_as_string
 
-        error stop header // ' with diagnostic data "' // trailer // '"'
+        error stop header // trailer
 
       end if check_assertion
 
