@@ -174,6 +174,7 @@ $ fpm test --profile release --flag -ffree-line-length-0
 
 Thankfully Fortran 2023 raised this obscolecent line limit to 10,000
 characters, so by using newer compilers you might never encounter this problem.
+In the case of gfortran, this appears to have been resolved by default starting in release 14.1.0.
 
 #### Line breaks in macro invocations
 
