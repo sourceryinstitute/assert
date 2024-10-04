@@ -10,12 +10,18 @@ submodule(assert_subroutine_m) assert_subroutine_s
 contains
 
   module procedure assert
-    use characterizable_m, only : characterizable_t
-
-    character(len=:), allocatable :: header, trailer
 
     toggle_assertions: &
     if (enforce_assertions) then
+        call assert_always(assertion, description, diagnostic_data)
+    end if toggle_assertions
+    
+  end procedure
+
+  module procedure assert_always
+    use characterizable_m, only : characterizable_t
+
+    character(len=:), allocatable :: header, trailer
 
       check_assertion: &
       if (.not. assertion) then
@@ -59,8 +65,6 @@ contains
 
       end if check_assertion
 
-    end if toggle_assertions
-    
   contains
     
     pure function string(numeric) result(number_as_string)

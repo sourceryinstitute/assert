@@ -22,9 +22,9 @@
 #endif
 
 #if ASSERTIONS
-# define call_assert(assertion) call assert(assertion, "call_assert(" // STRINGIFY(assertion) // ") in file " // __FILE__ // ", line " // string(__LINE__))
-# define call_assert_describe(assertion, description) call assert(assertion, description // " in file " // __FILE__ // ", line " // string(__LINE__))
-# define call_assert_diagnose(assertion, description, diagnostic_data) call assert(assertion, description // " in file " // __FILE__ // ", line " // string(__LINE__), diagnostic_data)
+# define call_assert(assertion) call assert_always(assertion, "call_assert(" // STRINGIFY(assertion) // ") in file " // __FILE__ // ", line " // string(__LINE__))
+# define call_assert_describe(assertion, description) call assert_always(assertion, description // " in file " // __FILE__ // ", line " // string(__LINE__))
+# define call_assert_diagnose(assertion, description, diagnostic_data) call assert_always(assertion, description // " in file " // __FILE__ // ", line " // string(__LINE__), diagnostic_data)
 #else
 # define call_assert(assertion)
 # define call_assert_describe(assertion, description)

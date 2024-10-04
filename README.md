@@ -35,8 +35,8 @@ preprocessor ASSERTIONS to non-zero, eg:
 ```
 fpm build --flag "-DASSERTIONS"
 ```
-The program [example/invoke-via-macro.F90] demonstrates the preferred way to invoke the `assert` subroutine via the three provided macros. 
-Invoking `assert` this way insures that `assert` invocations will be completely removed whenever the `ASSERTIONS` macro is undefined (or defined to zero) during compilation.
+The program [example/invoke-via-macro.F90] demonstrates the preferred way to invoke assertions via the three provided macros. 
+Invoking assertions this way ensures such calls will be completely removed whenever the `ASSERTIONS` macro is undefined (or defined to zero) during compilation.
 Due to a limitation of `fpm`, this approach works best if the project using Assert is also a `fpm` project.
 If instead `fpm install` is used, then either the user must copy `include/assert_macros.h` to the installation directory (default: `~/.local/include`) or 
 the user must invoke `assert` directly (via `call assert(...)`).

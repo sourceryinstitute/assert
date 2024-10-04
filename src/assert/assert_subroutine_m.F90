@@ -33,7 +33,7 @@ module assert_subroutine_m
   !!
   implicit none
   private
-  public :: assert
+  public :: assert, assert_always
 
 #ifndef USE_ASSERTIONS
 #  if ASSERTIONS
@@ -47,7 +47,8 @@ module assert_subroutine_m
   interface
 
     pure module subroutine assert(assertion, description, diagnostic_data)
-      !! If assertion is .false., error-terminate with a character stop code that contains diagnostic_data if present
+      !! If assertion is .false. and enforcement is enabled (e.g. via -DASSERTIONS=1), 
+      !! then error-terminate with a character stop code that contains diagnostic_data if present
       implicit none
       logical, intent(in) :: assertion
         !! Most assertions will be expressions such as i>0
@@ -55,6 +56,14 @@ module assert_subroutine_m
         !! A brief statement of what is being asserted such as "i>0" or "positive i"
       class(*), intent(in), optional :: diagnostic_data
         !! Data to include in an error ouptput: may be of an intrinsic type or a type that extends characterizable_t
+    end subroutine
+
+    pure module subroutine assert_always(assertion, description, diagnostic_data)
+      !! Same as above but always enforces the assertion (regardless of ASSERTIONS)
+      implicit none
+      logical, intent(in) :: assertion
+      character(len=*), intent(in) :: description
+      class(*), intent(in), optional :: diagnostic_data
     end subroutine
 
   end interface
