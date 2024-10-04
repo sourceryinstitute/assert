@@ -136,12 +136,18 @@
     <div class="col-md-9" id='text'>
     <p>use assertions_m, only : assert
    call assert( 2 &gt; 1, "2 &gt; 1")</p>
-<p>Turn off assertions in production code by setting USE_ASSERTIONS to .false. via the preprocessor.
+<p>Assertion enforcement is controlled via the <code>0</code> preprocessor macro,
+which can be defined to non-zero or zero at compilation time to
+respectively enable or disable runtime assertion enforcement.</p>
+<p>When the <code>0</code> preprocessor macro is not defined to any value,
+the default is that assertions are <em>disabled</em> and will not check the condition.</p>
+<p>Disabling assertion enforcement may eliminate any associated runtime
+overhead by enabling optimizing compilers to ignore the assertion procedure
+body during a dead-code-removal phase of optimization.</p>
+<p>To enable assertion enforcement (e.g., for a debug build), define the preprocessor 0 to non-zero.
 This file's capitalized .F90 extension causes most Fortran compilers to preprocess this file so
-that building as follows turns off assertion enforcement: </p>
-<p>fpm build --flag "-DUSE_ASSERTIONS=.false."</p>
-<p>Doing so may eliminate any associated runtime overhead by enabling optimizing compilers to ignore
-the assertion procedure body during a dead-code-removal phase of optimization.</p>
+that building as follows enables assertion enforcement: </p>
+<p>fpm build --flag "-DASSERTIONS"</p>
 <br>    
         <div class="panel panel-default">
       <div class="panel-heading">
@@ -315,7 +321,7 @@ the assertion procedure body during a dead-code-removal phase of optimization.</
 <tr>
   <td><span class="anchor" id="variable-enforce_assertions"></span>logical,</td>
 <td>private,</td>  <td>parameter</td><td>::</td>
-  <td><strong>enforce_assertions</strong></td><td> =</td><td>.true.</td><td><p>Turn off assertions as follows: fpm build --flag "-DUSE_ASSERTIONS=.false."</p></td>
+  <td><strong>enforce_assertions</strong></td><td> =</td><td>.false.</td><td></td>
 </tr>
 </tbody>
 </table>

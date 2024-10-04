@@ -1,8 +1,7 @@
 Assert
 ======
 
-A simple assertion utility taking advantage of the Fortran 2018 standard's introduction of variable stop codes
-and error termination inside pure procedures.
+An assertion utility that combines variable stop codes and error termination in `pure` procedures to produce descriptive messages when a program detects violations of the requirements for correct execution.
 
 Motivations
 -----------
@@ -11,18 +10,37 @@ Motivations
 
 Overview
 --------
-This assertion utility contains three public entities:
+This assertion utility contains four public entities:
 
 1. An `assert` subroutine,
 2. A `characterizable_t` abstract type supporting `assert`, and
 3. An `intrinsic_array_t` non-abstract type extending `characterizable_t`.
+4. An `assert_macros.h` header file containing C-preprocessor macros.
 
 The `assert` subroutine
-
-* Error-terminates with a variable stop code when a user-defined logical assertion fails,
+* Error-terminates with a variable stop code when a caller-provided logical assertion fails,
 * Includes user-supplied diagnostic data in the output if provided by the calling procedure,
 * Is callable inside `pure` procedures, and
-* Can be eliminated during an optimizing compiler's dead-code removal phase based on a preprocessor macro: `-DUSE_ASSERTIONS=.false.`.
+* Can be eliminated at compile-time, as controlled by the `ASSERTIONS` preprocessor define.
+
+Assertion enforcement is controlled via the `ASSERTIONS` preprocessor macro,
+which can be defined to non-zero or zero at compilation time to
+respectively enable or disable run-time assertion enforcement.
+
+When the `ASSERTIONS` preprocessor macro is not defined to any value,
+the default is that assertions are *disabled* and will not check the condition.
+
+To enable assertion enforcement (e.g., for a debug build), define the
+preprocessor ASSERTIONS to non-zero, eg:
+```
+fpm build --flag "-DASSERTIONS"
+```
+The program [example/invoke-via-macro.F90] demonstrates the preferred way to invoke the `assert` subroutine via the three provided macros. 
+Invoking `assert` this way insures that `assert` invocations will be completely removed whenever the `ASSERTIONS` macro is undefined (or defined to zero) during compilation.
+Due to a limitation of `fpm`, this approach works best if the project using Assert is also a `fpm` project.
+If instead `fpm install` is used, then either the user must copy `include/assert_macros.h` to the installation directory (default: `~/.local/include`) or 
+the user must invoke `assert` directly (via `call assert(...)`).
+In the latter approach when the assertions are disabled, the `assert` procedure will start and end with `if (.false.) then ... end if`, which might facilitate automatic removal of `assert` during the dead-code removal phase of optimizing compilers.
 
 The `characterizable_t` type defines an `as_character()` deferred binding that produces `character` strings for use as diagnostic output from a user-defined derived type that extends  `characterizable_t` and implements the deferred binding.
 
@@ -43,7 +61,7 @@ The requirements and assurances might be constraints of three kinds:
 2. **Postconditions (assurances):** expressions that must evaluate to `.true.` when a procedure finishes execution, and
 3. **Invariants:** universal pre- and postconditions that must always be true when all procedures in a class start or finish executing.
 
-The [examples/README.md] file shows examples of writing constraints in notes on class diagrams using the formal syntax of the Object Constraint Language ([OCL]).
+The [example/README.md] file shows examples of writing constraints in notes on class diagrams using the formal syntax of the Object Constraint Language ([OCL]).
 
 Downloading, Building, and Running Examples
 -------------------------------------------
@@ -58,14 +76,14 @@ cd assert
 #### Single-image (serial) execution
 The following command builds Assert and runs the full test suite in a single image:
 ```
-fpm test --profile release
+fpm test --profile release --flag "-ffree-line-length-0"
 ```
-which builds the Assert library and runs the test suite.
+which builds the Assert library (with the default of assertion enforcement disabled) and runs the test suite.
 
 #### Multi-image (parallel) execution
 With `gfortran` and OpenCoarrays installed,
 ```
-fpm test --compiler caf --profile release --runner "cafrun -n 2"
+fpm test --compiler caf --profile release --runner "cafrun -n 2" --flag "-ffree-line-length-0"
 ```
 To build and test with the Numerical Algorithms Group (NAG) Fortran compiler version
 7.1 or later, use
@@ -80,7 +98,6 @@ fpm test --compiler ifx --profile release --flag -coarray
 ### Building and testing with the LLVM `flang-new` compiler
 ```
 fpm test --compiler flang-new --flag "-mmlir -allow-assumed-rank -O3"
-
 ```
 
 ### Building and testing with the Numerical Algorithms Group (NAG) compiler
@@ -180,9 +197,9 @@ Instead when breaking long lines in a macro invocation, just break the line (no
 continuation character!), eg:
 
 ```fortran
-! When breaking a lines in a macro invocation, just use new-line with no `&` continuation character:
-call_assert_diagnose( computed_checksum == expected_checksum,
-                      "Checksum mismatch failure!",
+! When breaking a line in a macro invocation, use backslash `\` continuation character:
+call_assert_diagnose( computed_checksum == expected_checksum, \
+                      "Checksum mismatch failure!", \
                       expected_checksum )                  
 ```
 
@@ -206,8 +223,8 @@ comment (because they are removed by the preprocessor), for example with
 gfortran one can instead write the following:
 
 ```fortran
-call_assert_diagnose( computed_checksum == expected_checksum, /* ensured since version 3.14 */
-                      "Checksum mismatch failure!",           /* TODO: write a better message here */
+call_assert_diagnose( computed_checksum == expected_checksum, /* ensured since version 3.14 */ \
+                      "Checksum mismatch failure!",           /* TODO: write a better message here */ \
                       computed_checksum )
 ```
 
@@ -216,8 +233,8 @@ When in doubt, one can always move the comment outside the macro invocation:
 
 ```fortran
 ! assert a property ensured since version 3.14
-call_assert_diagnose( computed_checksum == expected_checksum, 
-                      "Checksum mismatch failure!",           
+call_assert_diagnose( computed_checksum == expected_checksum, \
+                      "Checksum mismatch failure!",           \
                       computed_checksum ) ! TODO: write a better message above
 ```                      
 
@@ -237,3 +254,4 @@ See the [LICENSE](LICENSE) file for copyright and licensing information.
 [OCL]: https://en.wikipedia.org/wiki/Object_Constraint_Language
 [Assert's GitHub Pages site]: https://berkeleylab.github.io/assert/
 [`ford`]: https://github.com/Fortran-FOSS-Programmers/ford
+[example/invoke-via-macro.F90]: ./example/invoke-via-macro.F90

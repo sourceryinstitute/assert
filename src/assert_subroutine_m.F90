@@ -1,33 +1,48 @@
+!     (c) 2024 UC Regents, see LICENSE file for detailed terms.
 !
 !     (c) 2019-2020 Guide Star Engineering, LLC
 !     This Software was developed for the US Nuclear Regulatory Commission (US NRC) under contract
 !     "Multi-Dimensional Physics Implementation into Fuel Analysis under Steady-state and Transients (FAST)",
 !     contract # NRC-HQ-60-17-C-0007
 !
+#include "assert_macros.h"
+
 module assert_subroutine_m
-  !! summary: Utility for runtime checking of logical assertions.
+  !! summary: Utility for runtime enforcement of logical assertions.
   !! usage: error-terminate if the assertion fails:
   !!
   !!    use assertions_m, only : assert
   !!    call assert( 2 > 1, "2 > 1")
   !!
-  !! Turn off assertions in production code by setting USE_ASSERTIONS to .false. via the preprocessor.
+  !! Assertion enforcement is controlled via the `ASSERTIONS` preprocessor macro,
+  !! which can be defined to non-zero or zero at compilation time to
+  !! respectively enable or disable runtime assertion enforcement.
+  !!
+  !! When the `ASSERTIONS` preprocessor macro is not defined to any value,
+  !! the default is that assertions are *disabled* and will not check the condition.
+  !!
+  !! Disabling assertion enforcement may eliminate any associated runtime
+  !! overhead by enabling optimizing compilers to ignore the assertion procedure
+  !! body during a dead-code-removal phase of optimization.
+  !!
+  !! To enable assertion enforcement (e.g., for a debug build), define the preprocessor ASSERTIONS to non-zero.
   !! This file's capitalized .F90 extension causes most Fortran compilers to preprocess this file so
-  !! that building as follows turns off assertion enforcement: 
+  !! that building as follows enables assertion enforcement: 
   !!
-  !!    fpm build --flag "-DUSE_ASSERTIONS=.false."
+  !!    fpm build --flag "-DASSERTIONS"
   !!
-  !! Doing so may eliminate any associated runtime overhead by enabling optimizing compilers to ignore
-  !! the assertion procedure body during a dead-code-removal phase of optimization.
   implicit none
   private
   public :: assert
 
 #ifndef USE_ASSERTIONS
-# define USE_ASSERTIONS .true.
+#  if ASSERTIONS
+#    define USE_ASSERTIONS .true.
+#  else
+#    define USE_ASSERTIONS .false.
+#  endif
 #endif
   logical, parameter :: enforce_assertions=USE_ASSERTIONS
-    !! Turn off assertions as follows: fpm build --flag "-DUSE_ASSERTIONS=.false."
 
   interface
 
