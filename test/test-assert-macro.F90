@@ -58,7 +58,32 @@ program test_assert_macros
 
 #undef ASSERTIONS
 #include "assert_macros.h"
-  call_assert_describe(.false., "")
-  print *,"  passes on being removed by the preprocessor when ASSERTIONS is undefined"
+  call_assert_diagnose(.false., "", "")
+  print *,"  passes on being removed by the preprocessor when ASSERTIONS is undefined" // new_line('')
+
+  !------------------------------------------
+
+#undef ASSERTIONS
+#define ASSERTIONS 1
+#include "assert_macros.h"
+  print *,"The call_assert_* macros"
+  block
+    logical :: foo
+    foo = check_assert(.true.)
+    print *,"  pass on invocation from a pure function"
+  end block
+
+contains 
+
+  pure function check_assert(cond) result(ok)
+    logical, intent(in) :: cond
+    logical ok
+
+    call_assert(cond)
+    call_assert_describe(cond, "check_assert")
+    call_assert_diagnose(cond, "check_assert", "")
+
+    ok = .true.
+  end function
 
 end program
