@@ -3,9 +3,10 @@
 program invoke_via_macro
   !! Demonstrate how to invoke the 'assert' subroutine using a preprocessor macro that facilitates
   !! the complete removal of the call in the absence of the compiler flag: -DASSERTIONS
-  use assert_m, only : assert, intrinsic_array_t, string
-    !! If an "only" clause is employed as above, it must include the "string" function that the
-    !! call_assert* macros reference when transforming the code below into "assert" subroutine calls.
+  use assert_m ! <--- this is the recommended use statement
+    !! If an "only" clause is employed above, the symbols required by the
+    !! macro expansion are subject to change without notice between versions.
+    !! You have been warned!
   implicit none
 
 #if !ASSERTIONS
@@ -15,7 +16,7 @@ program invoke_via_macro
   print *
 #endif
 
-  ! The C preprocessor will convert each call_assert* macro below into calls to the "assert" subroutine 
+  ! The C preprocessor will convert each call_assert* macro below into calls that enforce the assertion
   ! whenever the ASSERTIONS macro is defined to non-zero (e.g. via the -DASSERTIONS compiler flag).
   ! Whenever the ASSERTIONS macro is undefined or defined to zero (e.g. via the -DASSERTIONS=0 compiler flag),
   ! these calls will be entirely removed by the preprocessor.
