@@ -5,22 +5,25 @@ program test_assert_subroutine_error_termination
   
   integer exit_status
 
-  ! TODO: add '--profile release' if used in the 'fpm test' invocation that causes the program
-  ! ../example/test-assert-subroutine-error-termination.F90 to excute this example program.
-
   print *
   print *,"The assert subroutine"
+
+  ! TODO: The following is a HORRIBLY fragile test. 
+  ! Specifically, it encodes a bunch of compiler-specific flags into an fpm command, 
+  ! and if fpm fails for any unrelated reason (broken command, compile error, I/O error, etc)
+  ! we will mistakenly interpret that as a passing test!
+
   call execute_command_line( &
 #ifdef __GFORTRAN__
-    command = "fpm run --example false_assertion > /dev/null 2>&1", &
+    command = "fpm run --example false-assertion --profile release --flag '-DASSERTIONS -ffree-line-length-0' > /dev/null 2>&1", &
 #elif NAGFOR
-    command = "fpm run --example false_assertion --compiler nagfor --flag -fpp > /dev/null 2>&1", &
+    command = "fpm run --example false-assertion --compiler nagfor --flag '-DASSERTIONS -fpp' > /dev/null 2>&1", &
 #elif __flang__
     command = "./test/run-false-assertion.sh | fpm run --example check-exit-status", &
 #elif __INTEL_COMPILER
-    command = "fpm run --example false_assertion --compiler ifx --flag -O3 > /dev/null 2>&1", &
-#elif __CRAYFTN
-    command = "fpm run --example false_assertion --compiler crayftn.sh > /dev/null 2>&1", &
+    command = "fpm run --example false-assertion --compiler ifx --flag '-DASSERTIONS -O3' > /dev/null 2>&1", &
+#elif _CRAYFTN
+    command = "fpm run --example false-assertion --profile release --compiler crayftn.sh --flag '-DASSERTIONS' > /dev/null 2>&1", &
 #else
     command = "echo 'example/false_assertion.F90: unsupported compiler' && exit 1", &
 #endif
