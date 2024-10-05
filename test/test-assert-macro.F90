@@ -44,6 +44,18 @@ program test_assert_macros
   block
   integer :: computed_checksum = 37, expected_checksum = 37
 
+#if defined(_CRAYFTN)
+  ! Cray Fortran uses different line continuations in macro invocations
+  call_assert_diagnose( computed_checksum == expected_checksum, &
+                      "Checksum mismatch failure!", &
+                      expected_checksum )
+  print *,"  passes with macro-style line breaks"
+
+  call_assert_diagnose( computed_checksum == expected_checksum, & ! ensured since version 3.14
+                        "Checksum mismatch failure!",           & ! TODO: write a better message here 
+                        computed_checksum )
+  print *,"  passes with C block comments embedded in macro"
+#else
   call_assert_diagnose( computed_checksum == expected_checksum, \
                       "Checksum mismatch failure!", \
                       expected_checksum )
@@ -53,6 +65,7 @@ program test_assert_macros
                         "Checksum mismatch failure!",           /* TODO: write a better message here */ \
                         computed_checksum )
   print *,"  passes with C block comments embedded in macro"
+#endif
 
   end block
 

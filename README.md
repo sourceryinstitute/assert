@@ -178,39 +178,42 @@ In the case of gfortran, this appears to have been resolved by default starting 
 
 #### Line breaks in macro invocations
 
-As mentioned above, preprocessor macro invocations are always expanded to a
-single line, no matter how many lines were used by the invocation.  This means
-it's problematic to invoke the `call_assert*` macros with code like the
-following:
+The preprocessor is not currently specified by any Fortran standard, and
+as of 2024 its operation differs in subtle ways between compilers.
+One way in which compilers differ is how macro invocations can safely be broken
+across multiple lines.
+
+For example, gfortran and flang-new both accept backslash `\` continuation
+character for line-breaks in a macro invocation:
 
 ```fortran
-! INCORRECT: don't use & line continuations!
-call_assert_diagnose( computed_checksum == expected_checksum, &
-                      "Checksum mismatch failure!", &
-                      expected_checksum )                  
-```
-When the preprocessor expands the macro invocation above, the `&` characters
-above are not interpreted as Fortran line continuations. Instead they are
-inserted into the middle of the single-line macro expansion, where they will
-(likely) create a confusing syntax error.
-
-Instead when breaking long lines in a macro invocation, just break the line (no
-continuation character!), eg:
-
-```fortran
-! When breaking a line in a macro invocation, use backslash `\` continuation character:
+! OK for flang-new and gfortran
 call_assert_diagnose( computed_checksum == expected_checksum, \
                       "Checksum mismatch failure!", \
                       expected_checksum )                  
 ```
 
+Whereas Cray Fortran wants `&` line continuation characters, even inside
+a macro invocation:
+
+```fortran
+! OK for Cray Fortran
+call_assert_diagnose( computed_checksum == expected_checksum, &
+                      "Checksum mismatch failure!", &
+                      expected_checksum )                  
+```
+
+There appears to be no syntax acceptable to all compilers, so when writing
+portable code it's probably best to avoid line breaks inside a macro invocation.
+
+
 #### Comments in macro invocations
 
 Fortran does not support comments with an end delimiter,
-only to-end-of-line comments.  As such, there is no way to safely insert a
+only to-end-of-line comments.  As such, there is no portable way to safely insert a
 Fortran comment into the middle of a macro invocation.  For example, the
 following seemingly reasonable code results in a syntax error
-after macro expansion:
+after macro expansion (on gfortran and flang-new):
 
 ```fortran
 ! INCORRECT: cannot use Fortran comments inside macro invocation
@@ -220,7 +223,7 @@ call_assert_diagnose( computed_checksum == expected_checksum, ! ensured since ve
 ```
 
 Depending on your compiler it *might* be possible to use a C-style block
-comment (because they are removed by the preprocessor), for example with
+comment (because they are often removed by the preprocessor), for example with
 gfortran one can instead write the following:
 
 ```fortran
